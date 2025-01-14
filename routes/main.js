@@ -12,8 +12,9 @@ router.get("/generate-fake-data", async (req, res, next) => {
         image: "https://via.placeholder.com/250?text=Product+Image",
       });
 
+      console.log('product:', product)
+
       await product.save();
-      console.log("Product saved:", product);
     }
     res.send("Fake data generation complete!");
   } catch (err) {
