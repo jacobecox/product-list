@@ -22,20 +22,18 @@ router.get("/generate-fake-data", async (req, res, next) => {
 });
 
 router.get("/products", async (req, res, next) => {
+  console.log('Get /products called')
   try {
-  const perPage = 9;
+  const perPage = 9; // Items allowed per page to view
 
-  const page = req.query.page || 1 // Returns first page by default
+  const page = parseInt(req.query.page, 10) || 1 // Uses requested page number or defaults to page 1
 
-  const [products, count] = await Promise.all([
+  const [products, count] = await Promise.all([ // Promise.all holds runtime until all promises are fufilled
   Product.find({})
-  .skip(perPage * page - perPage)
+  .skip(perPage * page - perPage) // Skips the number of items per page up to end of current page, then subtracts current page to display
   .limit(perPage),
-  Product.countDocuments()
+  Product.countDocuments() // method to count documents with mongoose AKA to see how many products are in the collection
   ])
-    Product.countDocuments().exec((err, count) => {
-      if (err) return next(err)
-    })
     res.json({
       products,
       currentPage: page,
