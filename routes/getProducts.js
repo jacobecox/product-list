@@ -77,15 +77,15 @@ router.get("/products/:product", async (req, res, next) => {
 
 router.get("/products/:product/reviews", async (req, res, next) => {
   try {
-    const productId = req.params.id;
-    const page = parseInt(req.query.page, 10) || 1;
-    const perPage = 10;
+    const productId = req.params.id; // Get product id from params
+    const page = parseInt(req.query.page, 10) || 1; // Get page number from params
+    const perPage = 4; // Allow 4 reviews per page
 
     const reviews = await Review.find({ productId })
-      .skip((page - 1) * perPage)
-      .limit(4);
+      .skip(perPage * page - perPage) // Skip number of items per page * pages requested and subtract current page requested
+      .limit(perPage);
 
-    const totalReviews = await Review.countDocuments({ productId });
+    const totalReviews = await Review.countDocuments({ productId }); // Use mongoose method to count all documents in review collection to get total number of reviews
 
     res.status(200).json({
       reviews,
