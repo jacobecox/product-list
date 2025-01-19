@@ -7,7 +7,7 @@ const reviewSchema = new Schema({
   rating: Number,
   comment: String,
   date: Date,
-})
+}, { timestaps: true})
 
 const Review = mongoose.model('Review', reviewSchema);
 
