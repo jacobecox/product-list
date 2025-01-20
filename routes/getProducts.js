@@ -37,22 +37,25 @@ router.get("/generate-fake-data", async (req, res, next) => {
 
 router.get("/products", async (req, res, next) => {
   try {
-  const perPage = 9; // Items allowed per page to view
+    const { category, page = 1 } = req.query   // Get category and page from query, page defaults to 1 if left empty
+    const query = {}; // Start with empty query
 
-  const page = parseInt(req.query.page, 10) || 1 // Uses requested page number or defaults to page 1
+    if (category) { // If there is a category then add that filter to the query
+      query.category = category
+    }
 
-  const [products, count] = await Promise.all([ // Promise.all holds runtime until all promises are fufilled
-  Product.find({})
-  .skip(perPage * page - perPage) // Skips the number of items per page up to end of current page, then subtracts current page to display
-  .limit(perPage),
-  Product.countDocuments() // method to count documents with mongoose AKA to see how many products are in the collection
-  ])
-    res.json({
-      products,
-      currentPage: page,
-      totalPages: Math.ceil(count / perPage),
-      totalItems: count,
-    });
+    const perPage = 9; // Items allowed per page to view
+
+    const products = await Product.find(query)
+    .skip(perPage * page - perPage) // Skips the number of items per page up to end of current page, then subtracts current page to display
+    .limit(perPage),
+    totalItems = await Product.countDocuments(query) // method to count documents with mongoose AKA to see how many products are in the collection
+      res.json({
+        products,
+        currentPage: parseInt(page, 10),
+        totalPages: Math.ceil(totalItems / perPage),
+        totalItems: totalItems,
+      });
   } catch (error) {
     next(error); // Pass errors to the global error handler
   }
