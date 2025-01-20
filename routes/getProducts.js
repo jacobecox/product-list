@@ -64,7 +64,7 @@ router.get("/products/:product", async (req, res, next) => {
     
     const product = await Product.findById(productId) // mongoose method to find the id matching productId
     
-    if(!product) { // handle if no matching id is found
+    if (!product) { // handle if no matching id is found
       return res.status(404).json({ message: 'product not found'})
     }
     

@@ -17,7 +17,10 @@ const getRoutes = require("./routes/getProducts");
 app.use(getRoutes);
 
 const postRoutes = require("./routes/postProducts");
-app.use(postRoutes)
+app.use(postRoutes);
+
+const deleteRoutes = require("./routes/deleteProducts");
+app.use(deleteRoutes);
 
 app.listen(8000, () => {
   console.log("Node.js listening on port " + 8000);
