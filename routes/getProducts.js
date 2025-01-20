@@ -37,19 +37,31 @@ router.get("/generate-fake-data", async (req, res, next) => {
 
 router.get("/products", async (req, res, next) => {
   try {
-    const { category, page = 1 } = req.query   // Get category and page from query, page defaults to 1 if left empty
+    const { category, sort, keyword, page = 1 } = req.query   // Get category and page from query, page defaults to 1 if left empty
     const query = {}; // Start with empty query
 
     if (category) { // If there is a category then add that filter to the query
       query.category = category
+    }
+    
+    if (keyword) {
+      query.name = { $regex: keyword, $options: "i" }; // Case-insensitive search for the keyword in the name field
+    }
+
+    let sortOrder = {}; // Determine the sort order of price
+    if (sort === "lowest") {
+      sortOrder.price = 1; // Ascending order
+    } else if (sort === "highest") {
+      sortOrder.price = -1; // Descending order
     }
 
     const perPage = 9; // Items allowed per page to view
 
     const products = await Product.find(query)
     .skip(perPage * page - perPage) // Skips the number of items per page up to end of current page, then subtracts current page to display
-    .limit(perPage),
-    totalItems = await Product.countDocuments(query) // method to count documents with mongoose AKA to see how many products are in the collection
+    .limit(perPage)
+    .sort(sortOrder), // Sort the products by the sort order
+    totalItems = await Product.countDocuments(query) // method to count documents with mongoose to see how many products are in the collection with query filters applied
       res.json({
         products,
         currentPage: parseInt(page, 10),
