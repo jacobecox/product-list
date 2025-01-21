@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "dev": "concurrently \"next dev\" \"node server.js\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
@@ -11,8 +12,18 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "faker": "^5.5.3",
-    "mongoose": "^8.9.4"
+    "mongoose": "^8.9.4",
+    "next": "14.0.2",
+    "proptypes": "^1.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.2"
   }
 }
