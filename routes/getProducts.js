@@ -2,6 +2,7 @@ const router = require("express").Router();
 const faker = require("faker");
 const Product = require("../models/product");
 const Review = require("../models/review");
+const product = require("../models/product");
 
 router.get("/generate-fake-data", async (req, res, next) => {
   try {
@@ -10,7 +11,7 @@ router.get("/generate-fake-data", async (req, res, next) => {
         category: faker.commerce.department(),
         name: faker.commerce.productName(),
         price: faker.commerce.price(),
-        image: "https://via.placeholder.com/250?text=Product+Image",
+        image: "https://industrialphysics.com/wp-content/uploads/2022/08/product-image-coming-soon-300.png",
       });
 
       await product.save(); // Save the product first
@@ -37,21 +38,21 @@ router.get("/generate-fake-data", async (req, res, next) => {
 
 router.get("/products", async (req, res, next) => {
   try {
-    const { category, sort, keyword, page = 1 } = req.query   // Get category and page from query, page defaults to 1 if left empty
+    const { category, sort, search, page = 1 } = req.query   // Get category and page from query, page defaults to 1 if left empty
     const query = {}; // Start with empty query
 
-    if (category) { // If there is a category then add that filter to the query
+    if (category && category !== "All") { // If there is a category that is not "All" then add that filter to the query
       query.category = category
     }
     
-    if (keyword) {
-      query.name = { $regex: keyword, $options: "i" }; // Case-insensitive search for the keyword in the name field
+    if (search) {
+      query.name = { $regex: search, $options: "i" }; // Case-insensitive search for the search  in the name field
     }
 
     let sortOrder = {}; // Determine the sort order of price
-    if (sort === "lowest") {
+    if (sort === "asc") {
       sortOrder.price = 1; // Ascending order
-    } else if (sort === "highest") {
+    } else if (sort === "desc") {
       sortOrder.price = -1; // Descending order
     }
 
@@ -113,5 +114,14 @@ router.get("/products/:product/reviews", async (req, res, next) => {
     next(error);
   }
 });
+
+router.get("/categories", async (req, res, next) => {
+  try {
+    const categories = await Product.distinct("category"); // Mongoose method to find values with the key "categories" in Products collection
+    res.json(categories);
+  } catch (err) {
+    next(err) // Send to global errors
+  }
+})
 
 module.exports = router;
