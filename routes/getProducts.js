@@ -46,7 +46,7 @@ router.get("/products", async (req, res, next) => {
     }
     
     if (search) {
-      query.name = { $regex: search, $options: "i" }; // Case-insensitive search for the search  in the name field
+      query.name = { $regex: search, $options: "i" }; // Case-insensitive search, searches for words matching the search in the name field
     }
 
     let sortOrder = {}; // Determine the sort order of price

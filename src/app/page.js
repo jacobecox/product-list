@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 const filters = ["None", "Price: Low to High", "Price: High to Low"];
 
 export default function App() {
+  // Holds the state of each item below
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1)
@@ -15,7 +16,7 @@ export default function App() {
   const [loading, setLoading] =  useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  useEffect(() => { // Fetches all categories in database collection when component mounts
     const fetchCategories = async () => {
       try {
         const response = await fetch("http://localhost:8000/categories");
@@ -29,10 +30,10 @@ export default function App() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // Fetches all products when called
     const fetchProducts = async () => {
       try {
-        const params = new URLSearchParams({
+        const params = new URLSearchParams({ // URLSearchParams handles query strings in the url to be sent back to db
           page: currentPage,
           search,
           category: selectedCategory,
@@ -42,7 +43,7 @@ export default function App() {
         if (!response.ok) {
           throw new Error("Failed to fetch products")
         }
-        const data = await response.json();
+        const data = await response.json(); // Sets the state to be what the data returned is
         setProducts(data.products)
         setCurrentPage(data.currentPage)
         setTotalPages(data.totalPages)
@@ -54,9 +55,9 @@ export default function App() {
       };
     };
     fetchProducts()
-  }, [currentPage, search, selectedCategory, selectedFilter]);  
+  }, [currentPage, search, selectedCategory, selectedFilter]);  // Any time these dependencies change the useEffect will run again
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page) => { // Sets the current page to change to whatever page was selected
     setCurrentPage(page);
   };
 
